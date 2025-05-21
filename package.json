@@ -8,11 +8,14 @@
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
+    "start:both": "concurrently \"vite\" \"electron-forge start\"",
+    "build:both": "concurrently \"vite build\" \"electron-forge make\"",
     "start": "electron-forge start",
     "package": "electron-forge package",
     "make": "electron-forge make"
   },
   "dependencies": {
+    "concurrently": "^9.1.2",
     "electron-squirrel-startup": "^1.0.1",
     "vue": "^3.5.13"
   },
