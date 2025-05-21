@@ -1,20 +1,38 @@
 <script setup>
-import HelloWorld from './components/HelloWorld.vue'
-import TheWelcome from './components/TheWelcome.vue'
+import HelloWorld from "./components/HelloWorld.vue"
+import TheWelcome from "./components/TheWelcome.vue"
+import { ref } from "vue"
+const mainResponse = ref("")
+// 使用 ipcRenderer.send() 发送消息到主进程
+const sendMessage = () => {
+  window.electronAPI.sendMessage(
+    "message-from-renderer",
+    "Hello from renderer!"
+  )
+  // 使用 ipcRenderer.on() 接收来自主进程的响应
+  window.electronAPI.receiveMessage("response-from-main", (response) => {
+    mainResponse.value = response
+  })
+}
+// 使用 ipcRenderer.invoke() 发送同步请求到主进程
+const sendRequest = async () => {
+  try {
+    const response = await window.electronAPI.invokeMain(
+      "request-from-renderer",
+      "Request from renderer"
+    )
+    mainResponse.value = response
+  } catch (error) {
+    console.error("Error invoking main process:", error)
+  }
+}
 </script>
 
 <template>
-  <header>
-    <img alt="Vue logo" class="logo" src="./assets/logo.svg" width="125" height="125" />
-
-    <div class="wrapper">
-      <HelloWorld msg="You did it!" />
-    </div>
-  </header>
-
-  <main>
-    <TheWelcome />
-  </main>
+ <h1>Electron + Vue IPC Communication</h1>
+    <button @click="sendMessage">Send Message</button>
+    <button @click="sendRequest">Send Request</button>
+    <p>Response from main: {{ mainResponse }}</p>
 </template>
 
 <style scoped>
